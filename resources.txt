@@ -1,0 +1,13 @@
+Deploy your completed Journal API on AWS. The Journal Starter README covers the application; this page lists only the cloud deployment constraints, verification contract, and evidence required to finish Phase 4.
+
+
+Cloud Resources:
+	VPC
+		Private Subnet(2 for RDS)
+			DB(RDS PostgreSQL)
+            Route Table
+            NAT Gateway
+		Public Subnet
+			API
+            Route Table
+            Internet Gateway
