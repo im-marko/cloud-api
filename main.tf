@@ -22,14 +22,33 @@ provider "aws" {
 }
 
 locals {
-  name = "${var.project_name}-${var.environment}"
+  name    = "${var.project_name}-${var.environment}"
+  is_prod = var.environment == "prod"
 }
 
 data "aws_availability_zones" "available" {
   state = "available"
 }
 
-output "availability_zones" {
-  value = data.aws_availability_zones.available.names
+# output "availability_zones" {
+# value = data.aws_availability_zones.available.names
+# }
+
+data "aws_ec2_instance_type_offerings" "api" {
+  location_type = "availability-zone"
+
+  filter {
+    name   = "instance-type"
+    values = [var.instance_type]
+  }
 }
 
+locals {
+  azs = slice(
+    sort(setintersection(
+      data.aws_availability_zones.available.names,
+      data.aws_ec2_instance_type_offerings.api.locations
+    )),
+    0, 2
+  )
+}

@@ -31,3 +31,48 @@ variable "vpc_cidr" {
     error_message = "vpc_cidr must be a valid CIDR block. eg 10.0.0.0/16"
   }
 }
+
+variable "instance_type" {
+  description = "EC2 Instance type for the API. t4g = ARM(Graviton)"
+  type        = string
+  # default     = "t4g.micro" arch might cause problems
+  default = "t3.micro"
+}
+
+variable "app_port" {
+  description = "Port the API listens on for Cloudfront"
+  type        = number
+  default     = 8000
+}
+
+variable "admin_ssh_cidrs" {
+  description = "IPs allowed to ssh into instance"
+  type        = list(string)
+  default     = []
+  # default = ["0.0.0.0/0"]
+
+  validation {
+    condition     = alltrue([for c in var.admin_ssh_cidrs : can(cidrhost(c, 0)) && c != "0.0.0.0/0"])
+    error_message = "Each CIDR in admin_ssh_cidrs must be a valid IP address range, and not 0.0.0.0/0"
+  }
+}
+
+variable "db_instance_class" {
+  type    = string
+  default = "db.t3.micro"
+}
+
+variable "db_engine_version" {
+  type    = string
+  default = "17"
+}
+
+variable "db_name" {
+  type    = string
+  default = "journaldb"
+}
+
+variable "db_username" {
+  type    = string
+  default = "dbadmin"
+}
